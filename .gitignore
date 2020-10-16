@@ -1,0 +1,10 @@
+# slock files
+config.h
+
+# C files
+*.o
+slock
+
+# patch files
+*.rej
+*.orig
