@@ -32,6 +32,7 @@ enum {
 	INIT,
 	INPUT,
 	FAILED,
+	BLOCKS,
 	NUMCOLS
 };
 
@@ -86,6 +87,39 @@ dontkillme(void)
 	}
 }
 #endif
+
+static void
+draw_key_feedback(Display *dpy, struct lock **locks, int screen)
+{
+	XGCValues gr_values;
+
+	Window win = locks[screen]->win;
+	Window root_win;
+
+	gr_values.foreground = locks[screen]->colors[BLOCKS];
+	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
+
+	int width = blocks_width,
+			height = blocks_height,
+			x = blocks_x,
+			y = blocks_y;
+
+	if (height == 0 || width == 0) {
+		int _x, _y;
+		unsigned int screen_width, screen_height, _b, _d;
+		XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
+		width = width ? width : screen_width;
+		height = height ? height : screen_height;
+	}
+
+	unsigned int block_width = width / blocks_count;
+	unsigned int position = rand() % blocks_count;
+
+	XClearWindow(dpy, win);
+	XFillRectangle(dpy, win, gc, x + position*block_width, y, block_width, height);
+
+	XFreeGC(dpy, gc);
+}
 
 static const char *
 gethash(void)
@@ -190,6 +224,9 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					memcpy(passwd + len, buf, num);
 					len += num;
 				}
+				if (blocks_enabled)
+					for (screen = 0; screen < nscreens; screen++)
+						draw_key_feedback(dpy, locks, screen);
 				break;
 			}
 			color = len ? INPUT : ((failure || failonclear) ? FAILED : INIT);
@@ -361,6 +398,10 @@ main(int argc, char **argv) {
 		die("slock: setgid: %s\n", strerror(errno));
 	if (setuid(duid) < 0)
 		die("slock: setuid: %s\n", strerror(errno));
+
+	time_t t;
+	srand((unsigned) time(&t));
+
 
 	/* check for Xrandr support */
 	rr.active = XRRQueryExtension(dpy, &rr.evbase, &rr.errbase);
