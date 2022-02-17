@@ -8,3 +8,6 @@ slock
 # patch files
 *.rej
 *.orig
+
+# Tag files
+tags
