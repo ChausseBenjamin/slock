@@ -1,16 +1,20 @@
 /* user and group to drop privileges to */
-static const char *user  = "nobody";
-static const char *group = "nobody";
+static const char *user  = "master";
+static const char *group = "wheel";
 
 static const char *colorname[NUMCOLS] = {
 	[INIT] =   "black",     /* after initialization */
 	[INPUT] =  "#7D4B23",   /* during input */
 	[FAILED] = "#B7416E",   /* wrong password */
 	[BLOCKS] = "#f2f1f0",   /* key feedback block */
+	[PAM] =    "#19B596",   /* waiting for PAM */
 };
 
 /* treat a cleared input like a wrong password (color) */
 static const int failonclear = 1;
+
+/* PAM service that's used for authentication */
+static const char* pam_service = "login";
 
 // ### Blocks bar ###
 static short int blocks_enabled = 1; // 0 = don't show blocks
