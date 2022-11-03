@@ -2,6 +2,8 @@
 static const char *user  = "master";
 static const char *group = "wheel";
 
+static const char *cmd = "layouttoggle us";
+
 static const char *colorname[NUMCOLS] = {
 	[BACKGROUND] = "black",    /* after initialization */
 	[INIT]       = "#2d2d2d",  /* after initialization */

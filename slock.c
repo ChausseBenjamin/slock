@@ -563,6 +563,9 @@ main(int argc, char **argv) {
 		}
 	}
 
+  // Run a post system-lock command:
+  system(cmd);
+
 	/* everything is now blank. Wait for the correct password */
 	readpw(dpy, &rr, locks, nscreens, hash);
 
